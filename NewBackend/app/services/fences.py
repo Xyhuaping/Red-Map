@@ -70,10 +70,16 @@ class FenceService:
             if circle_fences:
                 fence = circle_fences[0]
                 figure = self._get_figure_brief(fence.figure_id)
+                dist = haversine_distance(
+                    request.latitude, request.longitude,
+                    float(fence.center_lat), float(fence.center_lng),
+                ) if fence.center_lat and fence.center_lng else None
+                distance = max(0, dist - float(fence.radius)) if dist is not None else None
                 return FenceCheckResponse(
                     triggered=True,
                     fence=self._enrich_fence(fence),
                     figure=figure,
+                    distance=distance,
                 )
         except Exception:
             logger.debug("Database spatial functions unavailable, falling back to Python calculation")
@@ -87,10 +93,12 @@ class FenceService:
                 )
                 if dist <= float(fence.radius):
                     figure = self._get_figure_brief(fence.figure_id)
+                    distance = max(0, dist - float(fence.radius))
                     return FenceCheckResponse(
                         triggered=True,
                         fence=self._enrich_fence(fence),
                         figure=figure,
+                        distance=distance,
                     )
 
             if fence.shape_type == "polygon" and fence.polygon_coords:
@@ -108,6 +116,7 @@ class FenceService:
                             triggered=True,
                             fence=self._enrich_fence(fence),
                             figure=figure,
+                            distance=0,
                         )
 
         return FenceCheckResponse(triggered=False)

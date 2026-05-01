@@ -21,3 +21,4 @@ class User(Base):
 
     tracks = relationship("UserTrack", back_populates="user", lazy="selectin")
     conversations = relationship("Conversation", back_populates="user", lazy="selectin")
+    triggers = relationship("FenceTrigger", back_populates="user", lazy="selectin")

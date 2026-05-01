@@ -80,8 +80,10 @@ class Store {
       const saved = getStorage(this.options.persistKey)
       if (saved) {
         try {
-          const parsedState = JSON.parse(saved)
-          Object.assign(this.state, parsedState)
+          const parsedState = typeof saved === 'string' ? JSON.parse(saved) : saved
+          if (parsedState && typeof parsedState === 'object') {
+            Object.assign(this.state, parsedState)
+          }
         } catch (error) {
           console.error('Failed to load state from storage:', error)
         }
@@ -140,7 +142,9 @@ const mapStore = new Store({
   fences: [],
   triggeredFences: [],
   selectedFence: null,
-  isLocating: false
+  isLocating: false,
+  heartbeatRunning: false,
+  lastHeartbeatTime: null
 })
 
 mapStore.setLocation = function(location) {
@@ -159,6 +163,14 @@ mapStore.addTriggeredFence = function(fence) {
 
 mapStore.setSelectedFence = function(fence) {
   this.state.selectedFence = fence
+}
+
+mapStore.setHeartbeatRunning = function(running) {
+  this.state.heartbeatRunning = running
+}
+
+mapStore.setLastHeartbeatTime = function(time) {
+  this.state.lastHeartbeatTime = time
 }
 
 const chatStore = new Store({

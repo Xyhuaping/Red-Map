@@ -3,10 +3,10 @@ import { mapStore } from '../store/index.js'
 
 export default class MapView {
   constructor(container, options = {}) {
-    this.container = typeof container === 'string' 
-      ? document.querySelector(container) 
+    this.container = typeof container === 'string'
+      ? document.querySelector(container)
       : container
-    
+
     if (!this.container) {
       throw new Error('Map container not found')
     }
@@ -30,6 +30,10 @@ export default class MapView {
     this.circles = []
     this.polygons = []
     this.locationMarker = null
+    this.accuracyCircle = null
+    this._lastLocation = null
+    this._lastHeading = null
+    this._unsubscribeLocation = null
 
     this.init()
   }
@@ -42,17 +46,76 @@ export default class MapView {
 
     try {
       await this.createMap()
-      
+
       if (this.options.showLocation) {
+        this._setupLocationSubscription()
         await this.initGeolocation()
         await this.initGeocoder()
       }
-      
+
       this.renderFences()
       this.bindEvents()
     } catch (error) {
       console.error('Failed to initialize map:', error)
     }
+  }
+
+  _setupLocationSubscription() {
+    this._unsubscribeLocation = mapStore.subscribe('currentLocation', (location) => {
+      if (!location || !this.mapInstance) return
+
+      let heading = this._lastHeading
+
+      if (this._lastLocation) {
+        const distance = this._calculateDistance(this._lastLocation, location)
+        if (distance > 3) {
+          heading = this._calculateBearing(this._lastLocation, location)
+          this._lastHeading = heading
+        }
+      }
+
+      this._lastLocation = { lng: location.lng, lat: location.lat }
+      this.addLocationMarker(location, heading)
+    })
+  }
+
+  _calculateBearing(from, to) {
+    const rad = Math.PI / 180
+    const dLng = (to.lng - from.lng) * rad
+    const lat1 = from.lat * rad
+    const lat2 = to.lat * rad
+
+    const y = Math.sin(dLng) * Math.cos(lat2)
+    const x = Math.cos(lat1) * Math.sin(lat2) - Math.sin(lat1) * Math.cos(lat2) * Math.cos(dLng)
+
+    let bearing = Math.atan2(y, x) * 180 / Math.PI
+    return (bearing + 360) % 360
+  }
+
+  _calculateDistance(point1, point2) {
+    if (!point1 || !point2) return 0
+
+    const rad = Math.PI / 180
+    const R = 6371000
+
+    const dLat = (point2.lat - point1.lat) * rad
+    const dLng = (point2.lng - point1.lng) * rad
+
+    const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(point1.lat * rad) * Math.cos(point2.lat * rad) *
+      Math.sin(dLng / 2) * Math.sin(dLng / 2)
+
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
+
+    return R * c
+  }
+
+  _createLocationIconHTML() {
+    return `<div style="width:28px;height:40px;position:relative;">
+      <div style="width:0;height:0;border-left:8px solid transparent;border-right:8px solid transparent;border-bottom:12px solid #3d93fd;position:absolute;top:0;left:6px;"></div>
+      <div style="width:20px;height:20px;background:#3d93fd;border:3px solid #fff;border-radius:50%;position:absolute;top:12px;left:4px;box-shadow:0 0 6px rgba(61,147,253,0.6);"></div>
+      <div style="width:8px;height:8px;background:#fff;border-radius:50%;position:absolute;top:18px;left:10px;"></div>
+    </div>`
   }
 
   async createMap() {
@@ -105,12 +168,11 @@ export default class MapView {
 
             mapStore.setLocation(location)
             this.centerToLocation(location)
-            this.addLocationMarker(location)
 
             if (this.options.onLocationUpdate) {
               this.options.onLocationUpdate(location)
             }
-            
+
             resolve(location)
           } else {
             console.warn('Geolocation failed:', result.message)
@@ -151,7 +213,7 @@ export default class MapView {
     }
 
     mapStore.setLocation(defaultLocation)
-    
+
     if (this.mapInstance) {
       this.mapInstance.setCenter([defaultLocation.lng, defaultLocation.lat])
     }
@@ -173,7 +235,6 @@ export default class MapView {
     if (!this.mapInstance) return
 
     this.mapInstance.on('click', (e) => {
-      // Map click handler if needed
     })
 
     this.mapInstance.on('moveend', () => {
@@ -307,7 +368,7 @@ export default class MapView {
 
     let sumLng = 0
     let sumLat = 0
-    
+
     coords.forEach(coord => {
       sumLng += coord.lng
       sumLat += coord.lat
@@ -319,23 +380,44 @@ export default class MapView {
     }
   }
 
-  addLocationMarker(location) {
+  addLocationMarker(location, heading = null) {
     if (!this.mapInstance || !location) return
+
+    const iconHTML = this._createLocationIconHTML()
 
     if (this.locationMarker) {
       this.locationMarker.setPosition([location.lng, location.lat])
+      if (heading !== null) {
+        this.locationMarker.setAngle(heading)
+      }
     } else {
       this.locationMarker = new AMap.Marker({
         position: [location.lng, location.lat],
-        icon: new AMap.Icon({
-          size: new AMap.Size(25, 34),
-          imageSize: new AMap.Size(25, 34),
-          image: '//a.amap.com/jsapi_demos/static/demo-center/icons/poi-marker-red.png'
-        }),
-        offset: new AMap.Pixel(-12, -34),
-        zIndex: 1000
+        content: iconHTML,
+        offset: new AMap.Pixel(-14, -22),
+        zIndex: 1000,
+        angle: heading || 0
       })
       this.mapInstance.add(this.locationMarker)
+    }
+
+    if (location.accuracy && location.accuracy > 0) {
+      if (this.accuracyCircle) {
+        this.accuracyCircle.setCenter([location.lng, location.lat])
+        this.accuracyCircle.setRadius(Math.max(location.accuracy, 10))
+      } else {
+        this.accuracyCircle = new AMap.Circle({
+          center: [location.lng, location.lat],
+          radius: Math.max(location.accuracy, 10),
+          fillColor: '#3d93fd',
+          fillOpacity: 0.12,
+          strokeColor: '#3d93fd',
+          strokeWeight: 1,
+          strokeOpacity: 0.25,
+          zIndex: 999
+        })
+        this.mapInstance.add(this.accuracyCircle)
+      }
     }
   }
 
@@ -359,9 +441,11 @@ export default class MapView {
     this.markers = this.locationMarker ? [this.locationMarker] : []
 
     this.circles.forEach(circle => {
-      if (this.mapInstance) this.mapInstance.remove(circle)
+      if (circle !== this.accuracyCircle && this.mapInstance) {
+        this.mapInstance.remove(circle)
+      }
     })
-    this.circles = []
+    this.circles = this.accuracyCircle ? [this.accuracyCircle] : []
 
     this.polygons.forEach(polygon => {
       if (this.mapInstance) this.mapInstance.remove(polygon)
@@ -409,7 +493,7 @@ export default class MapView {
 
   fitView(padding = [50, 50, 50, 50]) {
     if (!this.mapInstance) return
-    
+
     this.mapInstance.setFitView(null, false, padding)
   }
 
@@ -426,9 +510,19 @@ export default class MapView {
   destroy() {
     this.clearOverlays()
 
+    if (this._unsubscribeLocation) {
+      this._unsubscribeLocation()
+      this._unsubscribeLocation = null
+    }
+
     if (this.locationMarker && this.mapInstance) {
       this.mapInstance.remove(this.locationMarker)
       this.locationMarker = null
+    }
+
+    if (this.accuracyCircle && this.mapInstance) {
+      this.mapInstance.remove(this.accuracyCircle)
+      this.accuracyCircle = null
     }
 
     if (this.mapInstance) {
@@ -441,5 +535,7 @@ export default class MapView {
     this.markers = []
     this.circles = []
     this.polygons = []
+    this._lastLocation = null
+    this._lastHeading = null
   }
 }

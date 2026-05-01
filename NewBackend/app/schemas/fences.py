@@ -69,6 +69,7 @@ class FenceCheckResponse(BaseModel):
     triggered: bool
     fence: Optional[GeoFenceResponse] = None
     figure: Optional[RedFigureBrief] = None
+    distance: Optional[float] = None
 
 
 GeoFenceResponse.model_rebuild()

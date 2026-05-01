@@ -1,5 +1,10 @@
+import 'material-symbols/outlined.css'
 import { HashRouter } from './utils/router.js'
 import authService from './services/auth.js'
+import heartbeatService from './services/heartbeat.js'
+import fencePopup from './components/FencePopup.js'
+import permissionDialog from './components/PermissionDialog.js'
+import notificationService from './services/notification.js'
 import IndexPage from './pages/IndexPage.js'
 import LoginPage from './pages/LoginPage.js'
 import MapPage from './pages/MapPage.js'
@@ -79,12 +84,37 @@ function getPageTitle(path) {
   return titles[path] || ''
 }
 
+async function initHeartbeatService() {
+  try {
+    heartbeatService.setPopup(fencePopup)
+
+    const locationGranted = await permissionDialog.requestLocationPermission()
+    if (!locationGranted) {
+      console.log('[App] 位置权限未授予，心跳服务不启动')
+      return
+    }
+
+    const notificationAvailable = await notificationService.isAvailable()
+    if (notificationAvailable) {
+      await notificationService.init()
+      await permissionDialog.requestNotificationPermission()
+    }
+
+    await heartbeatService.start()
+    console.log('[App] 心跳服务启动完成')
+  } catch (e) {
+    console.error('[App] 心跳服务启动失败:', e)
+  }
+}
+
 window.addEventListener('DOMContentLoaded', () => {
   window._AMapSecurityConfig = {
     securityJsCode: '94d4378db1ad21baeed37a958a324f6a'
   }
 
   router.start('/')
+
+  initHeartbeatService()
 })
 
 export { router }

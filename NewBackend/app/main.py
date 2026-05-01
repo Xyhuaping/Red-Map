@@ -10,7 +10,7 @@ from app.core.middleware import setup_logging, request_logging_middleware
 from app.core.limiter import limiter
 from app.core.exceptions import AppException
 from app.core.exception_handlers import app_exception_handler, generic_exception_handler
-from app.api.v1 import auth, figures, fences, chat, tracks, media, admin
+from app.api.v1 import auth, figures, fences, chat, tracks, media, admin, triggers
 from app.api.ws import chat as ws_chat
 
 setup_logging()
@@ -49,6 +49,7 @@ app.include_router(chat.router, prefix="/api/v1/chat", tags=["AI对话 v1"])
 app.include_router(tracks.router, prefix="/api/v1/tracks", tags=["轨迹 v1"])
 app.include_router(media.router, prefix="/api/v1/media", tags=["文件管理"])
 app.include_router(admin.router, prefix="/api/v1/admin", tags=["后台管理"])
+app.include_router(triggers.router, prefix="/api/v1", tags=["围栏触发"])
 
 app.include_router(ws_chat.router, prefix="/ws", tags=["WebSocket"])
 

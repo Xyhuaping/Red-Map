@@ -6,10 +6,12 @@ from app.core.database import get_db
 from app.core.dependencies import get_current_user, require_admin
 from app.models.user import User
 from app.services.fences import FenceService
+from app.services.triggers import TriggerService
 from app.schemas.fences import (
     GeoFenceCreate, GeoFenceUpdate, GeoFenceResponse,
     FenceCheckRequest, FenceCheckResponse,
 )
+from app.schemas.triggers import ActiveFenceCompact
 from app.schemas.common import ResponseBase
 
 router = APIRouter()
@@ -24,6 +26,13 @@ def get_fences(
 ):
     service = FenceService(db)
     fences = service.get_fences(is_active, skip, limit)
+    return ResponseBase(data=fences)
+
+
+@router.get("/active", response_model=ResponseBase[list[ActiveFenceCompact]])
+def get_active_fences(db: Session = Depends(get_db)):
+    service = TriggerService(db)
+    fences = service.get_active_fences_compact()
     return ResponseBase(data=fences)
 
 

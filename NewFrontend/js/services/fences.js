@@ -25,6 +25,24 @@ class FencesService {
     const data = await request.patch(`/api/v1/fences/${id}/status`)
     return data
   }
+
+  async getActiveFences() {
+    const data = await request.get('/api/v1/fences/active')
+    return Array.isArray(data) ? data : []
+  }
+
+  async recordTrigger(triggerData) {
+    const data = await request.post('/api/v1/fences/trigger', triggerData)
+    return data
+  }
+
+  async getTriggerHistory(params = {}) {
+    const data = await request.get('/api/v1/triggers/history', {
+      page: params.page || 1,
+      page_size: params.pageSize || 20
+    })
+    return data
+  }
 }
 
 const fencesService = new FencesService()

@@ -1,4 +1,3 @@
-import locationService from './location.js'
 import { mapStore } from '../store/index.js'
 
 class FenceService {
