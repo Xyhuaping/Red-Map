@@ -1,0 +1,9 @@
+{
+  "appId": "com.xy.ar",
+  "appName": "红色文化AR游览",
+  "webDir": "dist",
+  "bundledWebRuntime": false,
+  "server": {
+    "androidScheme": "https"
+  }
+}

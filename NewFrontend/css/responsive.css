@@ -1,0 +1,90 @@
+@media screen and (max-width: 767px) {
+  .container {
+    padding: 0 var(--spacing-md);
+  }
+
+  .page-content {
+    padding: var(--spacing-md);
+  }
+
+  .grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
+  .grid-cols-3 { grid-template-columns: repeat(2, 1fr); }
+  .grid-cols-4 { grid-template-columns: repeat(2, 1fr); }
+
+  h1 { font-size: var(--font-size-2xl); }
+  h2 { font-size: var(--font-size-xl); }
+  h3 { font-size: var(--font-size-lg); }
+
+  .btn-lg {
+    padding: var(--spacing-md) var(--spacing-xl);
+    font-size: var(--font-size-base);
+  }
+
+  .card__header,
+  .card__body,
+  .card__footer {
+    padding: var(--spacing-md);
+  }
+
+  .hide-mobile {
+    display: none !important;
+  }
+}
+
+@media screen and (min-width: 768px) and (max-width: 1023px) {
+  .container {
+    max-width: 960px;
+  }
+
+  .grid-cols-3 { grid-template-columns: repeat(3, 1fr); }
+  .grid-cols-4 { grid-template-columns: repeat(3, 1fr); }
+
+  .hide-tablet {
+    display: none !important;
+  }
+}
+
+@media screen and (min-width: 1024px) {
+  .container {
+    max-width: 1200px;
+  }
+
+  .grid-cols-3 { grid-template-columns: repeat(3, 1fr); }
+  .grid-cols-4 { grid-template-columns: repeat(4, 1fr); }
+
+  .page-content {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .hide-desktop {
+    display: none !important;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-bg-page: #1A1A1A;
+    --color-bg-card: #2D2D2D;
+    --color-bg-hover: #3D3D3D;
+    --color-text-primary: #F5F5F5;
+    --color-text-secondary: #B3B3B3;
+    --color-text-muted: #808080;
+    --color-border: #404040;
+    --color-border-light: #363636;
+    --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.3);
+    --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.25);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.35);
+    --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.4);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

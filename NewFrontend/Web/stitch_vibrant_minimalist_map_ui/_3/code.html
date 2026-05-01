@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+
+<html lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Be+Vietnam+Pro:wght@400;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        body {
+            font-family: 'Be Vietnam Pro', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-panel {
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-secondary": "#ffffff",
+                      "tertiary-fixed-dim": "#ffb3b5",
+                      "tertiary-fixed": "#ffdada",
+                      "on-primary-container": "#fefcff",
+                      "on-secondary-fixed-variant": "#004d67",
+                      "on-tertiary-fixed": "#40000c",
+                      "primary": "#0058bc",
+                      "surface": "#f9f9fe",
+                      "surface-tint": "#005bc1",
+                      "outline-variant": "#c1c6d7",
+                      "primary-fixed": "#d8e2ff",
+                      "on-background": "#1a1c1f",
+                      "on-primary-fixed": "#001a41",
+                      "tertiary-container": "#e51245",
+                      "on-primary": "#ffffff",
+                      "surface-container-high": "#e8e8ed",
+                      "error": "#ba1a1a",
+                      "tertiary": "#ba0034",
+                      "outline": "#717786",
+                      "on-error-container": "#93000a",
+                      "secondary-container": "#60cdff",
+                      "surface-container": "#ededf2",
+                      "secondary": "#006687",
+                      "on-surface": "#1a1c1f",
+                      "on-tertiary-fixed-variant": "#920027",
+                      "on-surface-variant": "#414755",
+                      "inverse-surface": "#2e3034",
+                      "on-tertiary-container": "#fffbff",
+                      "surface-bright": "#f9f9fe",
+                      "on-secondary-fixed": "#001e2b",
+                      "inverse-on-surface": "#f0f0f5",
+                      "surface-container-lowest": "#ffffff",
+                      "secondary-fixed-dim": "#74d1ff",
+                      "on-error": "#ffffff",
+                      "surface-container-low": "#f3f3f8",
+                      "inverse-primary": "#adc6ff",
+                      "primary-container": "#0070eb",
+                      "primary-fixed-dim": "#adc6ff",
+                      "error-container": "#ffdad6",
+                      "on-primary-fixed-variant": "#004493",
+                      "on-secondary-container": "#005572",
+                      "surface-dim": "#d9dade",
+                      "surface-container-highest": "#e2e2e7",
+                      "surface-variant": "#e2e2e7",
+                      "background": "#f9f9fe",
+                      "on-tertiary": "#ffffff",
+                      "secondary-fixed": "#c1e8ff"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "xl": "32px",
+                      "lg": "24px",
+                      "gutter": "12px",
+                      "container-margin": "20px",
+                      "md": "16px",
+                      "base": "4px",
+                      "sm": "12px",
+                      "xs": "8px"
+              },
+              "fontFamily": {
+                      "body-sm": ["Be Vietnam Pro"],
+                      "display-lg": ["Plus Jakarta Sans"],
+                      "headline-md": ["Plus Jakarta Sans"],
+                      "body-lg": ["Be Vietnam Pro"],
+                      "label-caps": ["Be Vietnam Pro"]
+              },
+              "fontSize": {
+                      "body-sm": ["14px", {"lineHeight": "20px", "letterSpacing": "0", "fontWeight": "400"}],
+                      "display-lg": ["34px", {"lineHeight": "41px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                      "headline-md": ["24px", {"lineHeight": "30px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                      "body-lg": ["17px", {"lineHeight": "24px", "letterSpacing": "-0.01em", "fontWeight": "400"}],
+                      "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}]
+              }
+            },
+          },
+        }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background overflow-hidden h-screen w-screen flex flex-col">
+<!-- Main Map Canvas -->
+<main class="relative flex-grow w-full overflow-hidden">
+<div class="absolute inset-0 bg-surface-container-low">
+<img class="w-full h-full object-cover grayscale-[20%] opacity-90" data-alt="Modern cartographic map of China with soft blue and green elevation shading, clean white road networks, and minimalist provincial boundaries" data-location="China" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAWDm4GNhhfKojbHIY3QMKKclSiiDXtJmuqCXVswpIn58d2249G9HqHsNpjppCj_vEmiHmYvVrGYVH1VaBBo3oYIXHCfHSnV3mu8ByQ51OYNTBLxPefp0UySkSVz08H2FVNYzFZbDJAbovwdkAf81XYD2DYnd-hInTmf8x5gBphsZ9UD9lOREpmLBrj2X_a0KcaWC-M6dKWooTh4CjLzINWW2r69PDv19JQ-pGT-yl8d0lq_tYDq2LDAJh2GBAs2dsyELKHwPihgg"/>
+<!-- Map Geofence Overlay Hint -->
+<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+<div class="relative flex items-center justify-center">
+<div class="absolute w-48 h-48 rounded-full border-2 border-primary/30 bg-primary/5 animate-pulse"></div>
+<div class="absolute w-64 h-64 rounded-full border border-primary/10 bg-primary/5"></div>
+<div class="z-10 w-4 h-4 bg-primary rounded-full shadow-[0_0_15px_rgba(0,88,188,0.5)] border-2 border-white"></div>
+</div>
+</div>
+</div>
+<!-- TopAppBar: Shared Component Implementation -->
+<header class="bg-white/70 dark:bg-slate-900/70 backdrop-blur-xl text-blue-600 dark:text-blue-400 fixed top-4 inset-x-4 rounded-2xl border border-white/20 dark:border-slate-800/50 shadow-[0_8px_32px_rgba(0,0,0,0.08)] flex justify-between items-center px-4 py-3 w-[calc(100%-32px)] z-50">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary" data-icon="location_on">location_on</span>
+<span class="font-['Plus_Jakarta_Sans'] font-bold text-base tracking-tight">北京市</span>
+</div>
+<div class="flex gap-2">
+<button class="w-10 h-10 flex items-center justify-center rounded-xl bg-white/40 dark:hover:bg-slate-800/40 transition-colors active:scale-95 transition-all duration-300 ease-out">
+<span class="material-symbols-outlined text-on-surface-variant">search</span>
+</button>
+<button class="w-10 h-10 flex items-center justify-center rounded-xl bg-white/40 dark:hover:bg-slate-800/40 transition-colors active:scale-95 transition-all duration-300 ease-out relative" id="notify-btn" aria-label="发现周边">
+<span class="material-symbols-outlined text-on-surface-variant" style="font-variation-settings: 'FILL' 1;">explore</span>
+<span class="absolute -top-1 -right-1 min-w-[16px] h-4 px-1 bg-primary text-white text-[10px] font-bold rounded-full flex items-center justify-center shadow-md" id="figure-count-badge">0</span>
+</button>
+</header>div>
+</header>
+<div class="absolute top-[72px] right-4 w-[260px] p-4 bg-white/95 backdrop-blur-xl rounded-2xl shadow-[0_12px_40px_rgba(0,0,0,0.15)] border border-white/50 opacity-0 invisible -translate-y-2 scale-[0.96] transition-all duration-250 ease-out z-[60] pointer-events-none" id="discover-popup">
+<div class="flex items-center gap-2.5 mb-2.5">
+<span class="w-9 h-9 flex items-center justify-center bg-secondary-container rounded-[10px] text-on-secondary-container text-xl" style="font-variation-settings: 'FILL' 1;">explore</span>
+<h3 class="font-display-lg text-body-lg font-bold text-on-surface m-0">发现周边</h3>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant m-0 mb-3.5 leading-relaxed" id="fence-info">当前区域有 0 个历史人物标记点</p>
+<button class="w-full py-2.5 bg-primary text-white border-none rounded-xl font-display-lg text-sm font-semibold cursor-pointer shadow-[0_4px_12px_rgba(0,88,188,0.25)] active:scale-[0.97] transition-all duration-200" id="ar-btn">详情</button>
+</div>
+<!-- Map Controls -->
+<div class="absolute right-6 top-1/2 -translate-y-1/2 flex flex-col gap-3 z-40">
+<button class="w-12 h-12 glass-panel bg-white/80 rounded-2xl shadow-lg flex items-center justify-center text-primary active:scale-90 transition-transform">
+<span class="material-symbols-outlined">add</span>
+</button>
+<button class="w-12 h-12 glass-panel bg-white/80 rounded-2xl shadow-lg flex items-center justify-center text-primary active:scale-90 transition-transform">
+<span class="material-symbols-outlined">remove</span>
+</button>
+<div class="h-1px w-8 bg-outline-variant/30 self-center"></div>
+<button class="w-12 h-12 glass-panel bg-primary rounded-2xl shadow-[0_8px_20px_rgba(0,88,188,0.3)] flex items-center justify-center text-white active:scale-90 transition-transform">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">my_location</span>
+</button>
+</div>
+
+</main>
+<!-- BottomNavBar: Shared Component Implementation -->
+<nav class="fixed bottom-6 left-1/2 -translate-x-1/2 w-[calc(100%-48px)] max-w-md z-50 flex justify-around items-center px-6 py-3 bg-white/80 dark:bg-slate-950/80 backdrop-blur-2xl rounded-[28px] border border-white/30 dark:border-slate-800/30 shadow-[0_20px_50px_rgba(0,122,255,0.15)]">
+<!-- Tab: 首页 (Active) -->
+<a class="flex flex-col items-center justify-center text-blue-600 dark:text-blue-400 scale-110 font-bold hover:opacity-100 animate-bounce-subtle active:scale-90 transition-all duration-500" href="#">
+<div class="relative">
+<span class="material-symbols-outlined" data-icon="home" style="font-variation-settings: 'FILL' 1;">home</span>
+<span class="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 bg-blue-600 rounded-full shadow-[0_0_8px_rgba(0,122,255,0.8)]"></span>
+</div>
+<span class="font-['Plus_Jakarta_Sans'] font-medium text-[11px] mt-1">首页</span>
+</a>
+<!-- Tab: 统计 -->
+<a class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 opacity-80 hover:opacity-100 active:scale-90 transition-all duration-500" href="#">
+<span class="material-symbols-outlined" data-icon="bar_chart">bar_chart</span>
+<span class="font-['Plus_Jakarta_Sans'] font-medium text-[11px] mt-1">统计</span>
+</a>
+<!-- Tab: 我的 -->
+<a class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 opacity-80 hover:opacity-100 active:scale-90 transition-all duration-500" href="#">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span class="font-['Plus_Jakarta_Sans'] font-medium text-[11px] mt-1">我的</span>
+</a>
+</nav>
+<!-- FAB for Task-specific action -->
+<div class="fixed right-6 bottom-32 z-50 md:hidden">
+<button class="w-14 h-14 bg-primary text-white rounded-full shadow-[0_10px_25px_rgba(0,88,188,0.4)] flex items-center justify-center active:scale-90 transition-transform">
+<span class="material-symbols-outlined text-[28px]">add_location_alt</span>
+</button>
+</div>
+</body></html>

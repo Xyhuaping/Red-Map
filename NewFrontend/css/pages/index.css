@@ -1,0 +1,656 @@
+/* ============================================
+   Homepage - Vibrant Minimalist Map UI Design
+   Based on Reference: stitch_vibrant_minimalist_map_ui/_3
+   ============================================ */
+
+/* Base Layout */
+.home-page {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+  background: var(--color-surface-container-lowest);
+  display: flex;
+  flex-direction: column;
+}
+
+/* Main Map Container */
+.map-main {
+  position: relative;
+  width: 100%;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.map-container {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+
+.map-element {
+  width: 100%;
+  height: 100%;
+}
+
+/* ============================================
+   Top App Bar (Header)
+   ============================================ */
+.top-app-bar {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  right: 16px;
+  z-index: 50;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background: rgba(255, 255, 255, 0.70);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.20);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+}
+
+.app-bar-location {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.app-bar-location .location-icon {
+  color: var(--color-primary);
+  font-size: 20px;
+}
+
+.location-name {
+  font-family: var(--font-family-display);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--color-primary);
+  letter-spacing: -0.01em;
+}
+
+.app-bar-actions {
+  position: relative;
+  display: flex;
+  gap: 8px;
+}
+
+.icon-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background: rgba(255, 255, 255, 0.40);
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 300ms ease-out;
+  color: var(--color-on-surface-variant);
+}
+
+.icon-btn:hover {
+  background: rgba(255, 255, 255, 0.60);
+}
+
+.icon-btn:active {
+  transform: scale(0.95);
+}
+
+.icon-btn .material-symbols-outlined {
+  font-size: 20px;
+}
+
+.icon-btn--discover {
+  position: relative;
+}
+
+.icon-btn--active {
+  background: rgba(0, 88, 188, 0.12);
+  color: var(--color-primary);
+}
+
+.icon-badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  background: var(--color-primary);
+  color: white;
+  font-size: 10px;
+  font-weight: 700;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  box-shadow: 0 2px 6px rgba(0, 88, 188, 0.35);
+}
+
+.discover-popup {
+  position: absolute;
+  top: 72px;
+  right: 16px;
+  width: 260px;
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 16px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.50);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-8px) scale(0.96);
+  transition: opacity 250ms ease-out, transform 250ms ease-out, visibility 250ms;
+  z-index: 60;
+  pointer-events: none;
+}
+
+.discover-popup--visible {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
+}
+
+.discover-popup__header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.discover-popup__icon {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-secondary-container);
+  border-radius: 10px;
+  color: var(--color-on-secondary-container);
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.discover-popup__title {
+  font-family: var(--font-family-display);
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--color-on-surface);
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+.discover-popup__desc {
+  font-size: 13px;
+  color: var(--color-on-surface-variant);
+  margin: 0 0 14px 0;
+  line-height: 1.5;
+}
+
+.discover-popup__action {
+  width: 100%;
+  padding: 10px 0;
+  background: var(--color-primary);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-family: var(--font-family-display);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 200ms ease-out;
+  box-shadow: 0 4px 12px rgba(0, 88, 188, 0.25);
+}
+
+.discover-popup__action:hover {
+  background: var(--color-primary-light);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(0, 88, 188, 0.35);
+}
+
+.discover-popup__action:active {
+  transform: scale(0.97);
+}
+
+/* ============================================
+   Map Controls (Right Side)
+   ============================================ */
+.map-controls {
+  position: absolute;
+  right: 24px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 40;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: center;
+}
+
+.control-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  background: rgba(255, 255, 255, 0.80);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: none;
+  border-radius: 16px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.10);
+  cursor: pointer;
+  transition: all 200ms ease-out;
+  color: var(--color-primary);
+}
+
+.control-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+.control-btn:active {
+  transform: scale(0.90);
+}
+
+.control-btn--primary {
+  background: var(--color-primary);
+  color: white;
+  box-shadow: 0 8px 20px rgba(0, 88, 188, 0.30);
+}
+
+.control-btn--primary:hover {
+  background: var(--color-primary-light);
+  box-shadow: 0 10px 25px rgba(0, 88, 188, 0.40);
+}
+
+.control-btn--loading {
+  pointer-events: none;
+  opacity: 0.8;
+}
+
+.control-btn .material-symbols-outlined {
+  font-size: 22px;
+}
+
+.control-divider {
+  width: 32px;
+  height: 1px;
+  background: var(--color-outline-variant);
+  opacity: 0.3;
+}
+
+/* ============================================
+   Tracks Preview Section
+   ============================================ */
+.tracks-preview {
+  position: absolute;
+  bottom: 200px;
+  left: 24px;
+  right: 24px;
+  z-index: 35;
+  display: none;
+}
+
+.track-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 16px;
+  margin-bottom: 8px;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: 16px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.30);
+  cursor: pointer;
+  transition: all 250ms ease-out;
+}
+
+.track-item:last-child {
+  margin-bottom: 0;
+}
+
+.track-item:hover {
+  transform: translateX(4px);
+  box-shadow: 0 4px 20px rgba(0, 88, 188, 0.08);
+}
+
+.track-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.track-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--color-on-surface);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.track-meta {
+  font-size: 12px;
+  color: var(--color-on-surface-variant);
+}
+
+.track-arrow {
+  color: var(--color-on-surface-variant);
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+/* ============================================
+   Bottom Navigation Bar
+   ============================================ */
+.bottom-nav {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 50;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  width: calc(100% - 48px);
+  max-width: 420px;
+  padding: 12px 24px;
+  background: rgba(255, 255, 255, 0.80);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border-radius: 28px;
+  border: 1px solid rgba(255, 255, 255, 0.30);
+  box-shadow: 0 20px 50px rgba(0, 122, 255, 0.15);
+}
+
+.nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 8px 16px;
+  text-decoration: none;
+  color: var(--color-text-muted);
+  transition: all 400ms ease-out;
+  cursor: pointer;
+}
+
+.nav-item:hover {
+  opacity: 1;
+}
+
+.nav-item:active {
+  transform: scale(0.90);
+}
+
+.nav-item--active {
+  color: var(--color-primary);
+  transform: scale(1.08);
+  font-weight: 700;
+}
+
+.nav-item .material-symbols-outlined {
+  font-size: 24px;
+  transition: all 300ms ease-out;
+}
+
+.nav-label {
+  font-family: var(--font-family-display);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+}
+
+/* Active indicator dot */
+.nav-item--active::after {
+  content: '';
+  position: relative;
+  top: -2px;
+  width: 5px;
+  height: 5px;
+  background: var(--color-primary);
+  border-radius: 50%;
+  box-shadow: 0 0 8px rgba(0, 122, 255, 0.8);
+}
+
+/* ============================================
+   FAB (Floating Action Button)
+   ============================================ */
+.fab-btn {
+  position: fixed;
+  right: 24px;
+  bottom: 128px;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  background: var(--color-primary);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  box-shadow: 0 10px 25px rgba(0, 88, 188, 0.40);
+  cursor: pointer;
+  transition: all 200ms ease-out;
+}
+
+.fab-btn:hover {
+  transform: scale(1.08);
+  box-shadow: 0 12px 30px rgba(0, 88, 188, 0.50);
+}
+
+.fab-btn:active {
+  transform: scale(0.90);
+}
+
+.fab-btn .material-symbols-outlined {
+  font-size: 28px;
+}
+
+/* ============================================
+   Loading Spinner
+   ============================================ */
+.loading-spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 600ms linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ============================================
+   Responsive Design
+   ============================================ */
+
+/* Tablet and Desktop */
+@media (min-width: 768px) {
+  .top-app-bar {
+    top: 24px;
+    left: 32px;
+    right: 32px;
+    padding: 14px 20px;
+    border-radius: 20px;
+    max-width: 600px;
+  }
+
+  .map-controls {
+    right: 32px;
+    gap: 14px;
+  }
+
+  .control-btn {
+    width: 52px;
+    height: 52px;
+  }
+
+  .tracks-preview {
+    left: 32px;
+    right: 32px;
+    bottom: 220px;
+  }
+
+  .discover-popup {
+    top: 80px;
+    right: 32px;
+  }
+
+  .bottom-nav {
+    bottom: 32px;
+    padding: 14px 32px;
+    max-width: 480px;
+  }
+
+  .fab-btn {
+    right: 32px;
+    bottom: 140px;
+    width: 60px;
+    height: 60px;
+  }
+}
+
+/* Large Desktop */
+@media (min-width: 1024px) {
+  .top-app-bar {
+    left: auto;
+    right: 32px;
+    top: 24px;
+    width: 320px;
+  }
+
+  .discover-popup {
+    top: 80px;
+    right: 32px;
+  }
+
+  .bottom-nav {
+    left: 32px;
+    right: auto;
+    transform: none;
+    width: auto;
+  }
+
+  .fab-btn {
+    right: 32px;
+  }
+}
+
+/* Small Mobile */
+@media (max-width: 375px) {
+  .top-app-bar {
+    left: 12px;
+    right: 12px;
+    padding: 10px 12px;
+  }
+
+  .location-name {
+    font-size: 14px;
+  }
+
+  .icon-btn {
+    width: 36px;
+    height: 36px;
+  }
+
+  .discover-popup {
+    top: 64px;
+    right: 12px;
+  }
+
+  .map-controls {
+    right: 16px;
+    gap: 10px;
+  }
+
+  .control-btn {
+    width: 44px;
+    height: 44px;
+  }
+
+  .bottom-nav {
+    width: calc(100% - 32px);
+    padding: 10px 16px;
+    bottom: 16px;
+  }
+
+  .fab-btn {
+    right: 16px;
+    bottom: 120px;
+    width: 52px;
+    height: 52px;
+  }
+
+  .tracks-preview {
+    left: 16px;
+    right: 16px;
+  }
+}
+
+/* Landscape Orientation */
+@media (max-height: 500px) and (orientation: landscape) {
+  .bottom-nav {
+    bottom: 12px;
+    padding: 8px 20px;
+  }
+
+  .map-controls {
+    top: 40%;
+  }
+}
+
+/* Safe Area Support for iOS */
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+  .bottom-nav {
+    padding-bottom: calc(12px + env(safe-area-inset-bottom));
+    bottom: env(safe-area-inset-bottom);
+  }
+
+}
+
+/* Accessibility - Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* High Contrast Mode */
+@media (prefers-contrast: high) {
+  .top-app-bar,
+  .control-btn,
+  .discover-popup,
+  .bottom-nav,
+  .track-item {
+    border-width: 2px;
+  }
+
+  .control-btn--primary {
+    outline: 2px solid currentColor;
+    outline-offset: 2px;
+  }
+}

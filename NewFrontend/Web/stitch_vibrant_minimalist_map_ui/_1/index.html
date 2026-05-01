@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>地图应用 - 个人中心</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Be+Vietnam+Pro:wght@400;500;600&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            -webkit-tap-highlight-color: transparent;
+            scroll-behavior: smooth;
+        }
+        @keyframes bounce-subtle {
+            0%, 100% { transform: scale(1.1) translateY(0); }
+            50% { transform: scale(1.1) translateY(-2px); }
+        }
+        .animate-bounce-subtle {
+            animation: bounce-subtle 3s infinite ease-in-out;
+        }
+        .page {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+        }
+        .page.active {
+            display: block;
+            opacity: 1;
+        }
+        .nav-item {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .nav-item.active {
+            color: #0058bc;
+            transform: scale(1.1);
+        }
+        .nav-item.active .nav-indicator {
+            opacity: 1;
+            transform: scale(1);
+        }
+        .menu-item {
+            transition: all 0.2s ease-out;
+        }
+        .menu-item:hover {
+            background-color: rgba(243, 243, 248, 0.8);
+        }
+        .menu-item:active {
+            transform: scale(0.98);
+        }
+        .card-hover {
+            transition: all 0.3s ease-out;
+        }
+        .card-hover:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(0, 88, 188, 0.12);
+        }
+        .toast {
+            animation: slideUp 0.3s ease-out;
+        }
+        @keyframes slideUp {
+            from {
+                transform: translateY(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        .fade-in {
+            animation: fadeIn 0.4s ease-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+    <script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-secondary-fixed": "#001e2b",
+                    "tertiary-fixed": "#ffdada",
+                    "surface-tint": "#005bc1",
+                    "secondary-container": "#60cdff",
+                    "on-primary-fixed": "#001a41",
+                    "outline": "#717786",
+                    "on-tertiary-fixed": "#40000c",
+                    "on-background": "#1a1c1f",
+                    "on-tertiary": "#ffffff",
+                    "surface": "#f9f9fe",
+                    "tertiary-container": "#e51245",
+                    "inverse-on-surface": "#f0f0f5",
+                    "outline-variant": "#c1c6d7",
+                    "on-primary": "#ffffff",
+                    "on-secondary-fixed-variant": "#004d67",
+                    "primary-container": "#0070eb",
+                    "primary": "#0058bc",
+                    "surface-container": "#ededf2",
+                    "on-secondary": "#ffffff",
+                    "surface-container-high": "#e8e8ed",
+                    "secondary-fixed-dim": "#74d1ff",
+                    "background": "#f9f9fe",
+                    "secondary": "#006687",
+                    "tertiary": "#ba0034",
+                    "surface-variant": "#e2e2e7",
+                    "surface-container-lowest": "#ffffff",
+                    "on-tertiary-fixed-variant": "#920027",
+                    "on-surface": "#1a1c1f",
+                    "tertiary-fixed-dim": "#ffb3b5",
+                    "on-tertiary-container": "#fffbff",
+                    "surface-container-low": "#f3f3f8",
+                    "secondary-fixed": "#c1e8ff",
+                    "primary-fixed": "#d8e2ff",
+                    "surface-bright": "#f9f9fe",
+                    "inverse-surface": "#2e3034",
+                    "inverse-primary": "#adc6ff",
+                    "on-primary-fixed-variant": "#004493",
+                    "primary-fixed-dim": "#adc6ff",
+                    "on-error-container": "#93000a",
+                    "on-error": "#ffffff",
+                    "surface-container-highest": "#e2e2e7",
+                    "on-surface-variant": "#414755",
+                    "on-secondary-container": "#005572",
+                    "error-container": "#ffdad6",
+                    "surface-dim": "#d9dade",
+                    "on-primary-container": "#fefcff",
+                    "error": "#ba1a1a"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "base": "4px",
+                    "lg": "24px",
+                    "container-margin": "20px",
+                    "sm": "12px",
+                    "xs": "8px",
+                    "md": "16px",
+                    "xl": "32px",
+                    "gutter": "12px"
+            },
+            "fontFamily": {
+                    "headline-md": ["Plus Jakarta Sans"],
+                    "body-sm": ["Be Vietnam Pro"],
+                    "body-lg": ["Be Vietnam Pro"],
+                    "label-caps": ["Be Vietnam Pro"],
+                    "display-lg": ["Plus Jakarta Sans"]
+            },
+            "fontSize": {
+                    "headline-md": ["24px", {"lineHeight": "30px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "body-sm": ["14px", {"lineHeight": "20px", "letterSpacing": "0", "fontWeight": "400"}],
+                    "body-lg": ["17px", {"lineHeight": "24px", "letterSpacing": "-0.01em", "fontWeight": "400"}],
+                    "label-caps": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                    "display-lg": ["34px", {"lineHeight": "41px", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+            }
+          },
+        },
+      }
+    </script>
+    <style>
+      body {
+        min-height: max(884px, 100dvh);
+      }
+    </style>
+</head>
+<body class="bg-surface font-body-lg text-on-surface selection:bg-primary-container selection:text-on-primary-container">
+
+    <!-- Header -->
+    <header class="fixed top-4 inset-x-4 rounded-2xl bg-white/70 backdrop-blur-xl border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.08)] flex justify-between items-center px-4 py-3 w-full z-50 transition-all duration-300 ease-out active:scale-95">
+        <div class="flex items-center gap-2 cursor-pointer hover:scale-105 transition-transform" onclick="handleLocationClick()">
+            <span class="material-symbols-outlined text-blue-600">location_on</span>
+            <span class="font-['Plus_Jakarta_Sans'] font-bold text-base tracking-tight text-slate-500" id="currentCity">北京市</span>
+        </div>
+        <div class="flex items-center gap-3">
+            <button class="p-2 rounded-full hover:bg-white/40 transition-colors active:scale-90" onclick="handleNotification()">
+                <span class="material-symbols-outlined text-slate-500">notifications</span>
+            </button>
+            <button class="p-2 rounded-full hover:bg-white/40 transition-colors active:scale-90" onclick="handleSettings()">
+                <span class="material-symbols-outlined text-blue-600 font-bold">settings</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="pt-28 pb-40 px-container-margin max-w-lg mx-auto min-h-screen">
+
+        <!-- Page: Profile (我的) -->
+        <div id="page-profile" class="page active fade-in">
+            <!-- User Info Card -->
+            <section class="mb-xl card-hover">
+                <div class="flex items-center gap-md p-lg bg-surface-container-lowest rounded-[32px] shadow-[0_4px_20px_rgba(0,88,188,0.06)] border border-white/50">
+                    <div class="relative cursor-pointer group" onclick="handleAvatarClick()">
+                        <div class="w-20 h-20 rounded-full overflow-hidden border-4 border-white shadow-lg group-hover:scale-105 transition-transform">
+                            <img alt="User profile" class="w-full h-full object-cover" id="userAvatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBOb-kAMtnfGdubJ-lTgR6visfiTaHxV_OWKhwGYSrsF-AvWRiHOO1tNpMztX5xgSMoCWFlffj9__DpwMDRBnyfr4GJ7HR9bRAAGvlGxk8i5EKR05KaA28AU_vi9CD1z5qbVcObSEtqwVJyHzh2sPLT7s4BQAZO_dq5JNSjs0Ok8O6gkoGFftV-5NPDlm73aC7LZrbzmLdl1A_UNdNIH-ZUKREdjhiueibI6_xoMwB1f1k8xoAu2C2uXMUTcosR1ZvAK-urGIloSA"/>
+                        </div>
+                        <div class="absolute bottom-0 right-0 w-6 h-6 bg-primary rounded-full border-2 border-white flex items-center justify-center">
+                            <span class="material-symbols-outlined text-[12px] text-white" style="font-variation-settings: 'FILL' 1;">edit</span>
+                        </div>
+                    </div>
+                    <div class="flex-1">
+                        <h1 class="font-headline-md text-headline-md text-on-surface mb-xs" id="userName">林沐云</h1>
+                        <div class="inline-flex items-center gap-1 bg-primary-fixed text-on-primary-fixed-variant px-sm py-1 rounded-full text-label-caps font-label-caps">
+                            <span class="material-symbols-outlined text-xs" style="font-variation-settings: 'FILL' 1;">verified</span>
+                            高级探索者
+                        </div>
+                    </div>
+                    <button class="w-10 h-10 flex items-center justify-center rounded-2xl bg-surface-container-high text-on-surface-variant hover:bg-primary-container hover:text-white transition-all duration-300 active:scale-90" onclick="handleQRCode()">
+                        <span class="material-symbols-outlined">qr_code_2</span>
+                    </button>
+                </div>
+            </section>
+
+            <!-- Stats Cards -->
+            <section class="grid grid-cols-2 gap-md mb-xl">
+                <div class="bg-gradient-to-br from-primary-container to-primary p-lg rounded-[28px] text-white shadow-[0_12px_24px_-8px_rgba(0,88,188,0.4)] card-hover cursor-pointer" onclick="handleMileageClick()">
+                    <div class="flex justify-between items-start mb-sm">
+                        <span class="material-symbols-outlined bg-white/20 p-2 rounded-xl" style="font-variation-settings: 'FILL' 1;">explore</span>
+                        <span class="text-label-caps font-label-caps opacity-80">本月里程</span>
+                    </div>
+                    <div class="flex items-baseline gap-1">
+                        <span class="text-display-lg font-display-lg" id="monthlyMileage">128</span>
+                        <span class="text-body-sm opacity-90">km</span>
+                    </div>
+                </div>
+                <div class="bg-surface-container-lowest p-lg rounded-[28px] border border-white/50 shadow-[0_4px_20px_rgba(0,0,0,0.04)] card-hover cursor-pointer" onclick="handleFavoritesClick()">
+                    <div class="flex justify-between items-start mb-sm">
+                        <span class="material-symbols-outlined bg-secondary-fixed p-2 rounded-xl text-secondary" style="font-variation-settings: 'FILL' 1;">stars</span>
+                        <span class="text-label-caps font-label-caps text-on-surface-variant">收藏地点</span>
+                    </div>
+                    <div class="flex items-baseline gap-1">
+                        <span class="text-display-lg font-display-lg text-on-surface" id="favoriteCount">42</span>
+                        <span class="text-body-sm text-on-surface-variant">处</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Menu Section -->
+            <section class="space-y-gutter">
+                <h3 class="text-label-caps font-label-caps text-outline ml-base mb-sm">个人中心</h3>
+                <div class="bg-surface-container-lowest rounded-[28px] overflow-hidden border border-white/50 shadow-[0_4px_20px_rgba(0,0,0,0.02)]">
+                    <a class="menu-item flex items-center gap-md p-md cursor-pointer" onclick="handleMyLocations()">
+                        <div class="w-11 h-11 flex items-center justify-center rounded-2xl bg-primary-fixed text-primary group-hover:scale-110 transition-transform">
+                            <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">location_on</span>
+                        </div>
+                        <div class="flex-1">
+                            <p class="font-body-lg text-on-surface font-medium">我的地点</p>
+                            <p class="text-[12px] text-outline">常用的家、公司与收藏</p>
+                        </div>
+                        <span class="material-symbols-outlined text-outline-variant">chevron_right</span>
+                    </a>
+                    <div class="mx-md h-px bg-surface-variant/50"></div>
+                    <a class="menu-item flex items-center gap-md p-md cursor-pointer" onclick="handleHistory()">
+                        <div class="w-11 h-11 flex items-center justify-center rounded-2xl bg-secondary-fixed text-secondary group-hover:scale-110 transition-transform">
+                            <span class="material-symbols-outlined">history</span>
+                        </div>
+                        <div class="flex-1">
+                            <p class="font-body-lg text-on-surface font-medium">行程历史</p>
+                            <p class="text-[12px] text-outline">查看你所有的探索足迹</p>
+                        </div>
+                        <span class="material-symbols-outlined text-outline-variant">chevron_right</span>
+                    </a>
+                    <div class="mx-md h-px bg-surface-variant/50"></div>
+                    <a class="menu-item flex items-center gap-md p-md cursor-pointer" onclick="handleFeedback()">
+                        <div class="w-11 h-11 flex items-center justify-center rounded-2xl bg-tertiary-fixed text-tertiary group-hover:scale-110 transition-transform">
+                            <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">chat_bubble</span>
+                        </div>
+                        <div class="flex-1">
+                            <p class="font-body-lg text-on-surface font-medium">意见反馈</p>
+                            <p class="text-[12px] text-outline">告诉我们如何变得更好</p>
+                        </div>
+                        <span class="material-symbols-outlined text-outline-variant">chevron_right</span>
+                    </a>
+                </div>
+                <div class="mt-xl bg-surface-container-lowest rounded-[28px] overflow-hidden border border-white/50 shadow-[0_4px_20px_rgba(0,0,0,0.02)]">
+                    <a class="menu-item flex items-center gap-md p-md cursor-pointer" onclick="handleSettingsMenu()">
+                        <div class="w-11 h-11 flex items-center justify-center rounded-2xl bg-surface-container-high text-on-surface-variant group-hover:scale-110 transition-transform">
+                            <span class="material-symbols-outlined">settings</span>
+                        </div>
+                        <div class="flex-1">
+                            <p class="font-body-lg text-on-surface font-medium">设置</p>
+                        </div>
+                        <span class="material-symbols-outlined text-outline-variant">chevron_right</span>
+                    </a>
+                </div>
+            </section>
+
+            <!-- Pro Upgrade Card -->
+            <div class="mt-xl p-lg bg-primary-container/5 rounded-[28px] border border-primary-container/10 flex items-center gap-md card-hover cursor-pointer" onclick="handleUpgradePro()">
+                <span class="material-symbols-outlined text-primary text-3xl">auto_awesome</span>
+                <div>
+                    <p class="font-body-lg font-bold text-primary">升级到 Pro</p>
+                    <p class="text-body-sm text-on-surface-variant">解锁离线地图与 3D 实景导览</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Page: Home (首页) -->
+        <div id="page-home" class="page">
+            <section class="mb-xl fade-in">
+                <div class="bg-gradient-to-br from-blue-500 to-blue-600 p-lg rounded-[32px] text-white shadow-lg">
+                    <h2 class="text-2xl font-bold mb-2">欢迎使用地图应用</h2>
+                    <p class="opacity-90 mb-4">探索世界，发现精彩</p>
+                    <button class="bg-white text-blue-600 px-6 py-2 rounded-full font-semibold hover:shadow-lg transition-all active:scale-95" onclick="handleStartExplore()">
+                        开始探索
+                    </button>
+                </div>
+            </section>
+
+            <section class="space-y-gutter">
+                <h3 class="text-label-caps font-label-caps text-outline ml-base mb-sm">快捷功能</h3>
+                <div class="grid grid-cols-2 gap-md">
+                    <div class="bg-surface-container-lowest p-lg rounded-[28px] border border-white/50 shadow-sm card-hover cursor-pointer" onclick="handleNearbySearch()">
+                        <span class="material-symbols-outlined text-3xl text-primary mb-2">search</span>
+                        <p class="font-body-lg font-medium">附近搜索</p>
+                        <p class="text-xs text-outline">发现周边精彩</p>
+                    </div>
+                    <div class="bg-surface-container-lowest p-lg rounded-[28px] border border-white/50 shadow-sm card-hover cursor-pointer" onclick="handleNavigation()">
+                        <span class="material-symbols-outlined text-3xl text-primary mb-2">directions</span>
+                        <p class="font-body-lg font-medium">路线导航</p>
+                        <p class="text-xs text-outline">智能规划路径</p>
+                    </div>
+                    <div class="bg-surface-container-lowest p-lg rounded-[28px] border border-white/50 shadow-sm card-hover cursor-pointer" onclick="handleTraffic()">
+                        <span class="material-symbols-outlined text-3xl text-primary mb-2">traffic</span>
+                        <p class="font-body-lg font-medium">实时路况</p>
+                        <p class="text-xs text-outline">避开拥堵路段</p>
+                    </div>
+                    <div class="bg-surface-container-lowest p-lg rounded-[28px] border border-white/50 shadow-sm card-hover cursor-pointer" onclick="handleShareLocation()">
+                        <span class="material-symbols-outlined text-3xl text-primary mb-2">share_location</span>
+                        <p class="font-body-lg font-medium">位置共享</p>
+                        <p class="text-xs text-outline">与好友分享</p>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- Page: Statistics (统计) -->
+        <div id="page-stats" class="page">
+            <section class="mb-xl fade-in">
+                <h2 class="text-headline-md font-headline-md text-on-surface mb-lg">使用统计</h2>
+                <div class="bg-surface-container-lowest p-lg rounded-[28px] border border-white/50 shadow-sm">
+                    <div class="grid grid-cols-3 gap-4 mb-6">
+                        <div class="text-center">
+                            <p class="text-display-lg font-display-lg text-primary">1,284</p>
+                            <p class="text-xs text-outline mt-1">总里程(km)</p>
+                        </div>
+                        <div class="text-center">
+                            <p class="text-display-lg font-display-lg text-primary">156</p>
+                            <p class="text-xs text-outline mt-1">探索天数</p>
+                        </div>
+                        <div class="text-center">
+                            <p class="text-display-lg font-display-lg text-primary">89</p>
+                            <p class="text-xs text-outline mt-1">新发现</p>
+                        </div>
+                    </div>
+                    <div class="h-48 bg-gradient-to-t from-primary/10 to-transparent rounded-2xl flex items-end justify-around p-4">
+                        <div class="w-8 bg-primary/60 rounded-t" style="height: 60%"></div>
+                        <div class="w-8 bg-primary/70 rounded-t" style="height: 80%"></div>
+                        <div class="w-8 bg-primary/80 rounded-t" style="height: 45%"></div>
+                        <div class="w-8 bg-primary/90 rounded-t" style="height: 90%"></div>
+                        <div class="w-8 bg-primary rounded-t" style="height: 70%"></div>
+                        <div class="w-8 bg-primary/85 rounded-t" style="height: 100%"></div>
+                        <div class="w-8 bg-primary/75 rounded-t" style="height: 55%"></div>
+                    </div>
+                    <p class="text-xs text-center text-outline mt-3">最近7天活动趋势</p>
+                </div>
+            </section>
+
+            <section class="space-y-gutter">
+                <h3 class="text-label-caps font-label-caps text-outline ml-base mb-sm">成就徽章</h3>
+                <div class="bg-surface-container-lowest p-lg rounded-[28px] border border-white/50 shadow-sm">
+                    <div class="grid grid-cols-4 gap-4">
+                        <div class="text-center">
+                            <div class="w-14 h-14 mx-auto bg-yellow-100 rounded-full flex items-center justify-center mb-2">
+                                <span class="material-symbols-outlined text-yellow-600">emoji_events</span>
+                            </div>
+                            <p class="text-xs text-on-surface">探索达人</p>
+                        </div>
+                        <div class="text-center">
+                            <div class="w-14 h-14 mx-auto bg-blue-100 rounded-full flex items-center justify-center mb-2">
+                                <span class="material-symbols-outlined text-blue-600">location_city</span>
+                            </div>
+                            <p class="text-xs text-on-surface">城市漫步者</p>
+                        </div>
+                        <div class="text-center">
+                            <div class="w-14 h-14 mx-auto bg-green-100 rounded-full flex items-center justify-center mb-2">
+                                <span class="material-symbols-outlined text-green-600">park</span>
+                            </div>
+                            <p class="text-xs text-on-surface">自然爱好者</p>
+                        </div>
+                        <div class="text-center">
+                            <div class="w-14 h-14 mx-auto bg-gray-100 rounded-full flex items-center justify-center mb-2">
+                                <span class="material-symbols-outlined text-gray-400">lock</span>
+                            </div>
+                            <p class="text-xs text-outline">待解锁</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Bottom Navigation -->
+    <nav class="fixed bottom-6 left-1/2 -translate-x-1/2 w-[calc(100%-48px)] max-w-md z-50 flex justify-around items-center px-6 py-3 bg-white/80 backdrop-blur-2xl rounded-[28px] border border-white/30 shadow-[0_20px_50px_rgba(0,122,255,0.15)]">
+        <div class="nav-item flex flex-col items-center justify-center cursor-pointer opacity-80 hover:opacity-100 active:scale-90" data-page="home" onclick="switchPage('home')">
+            <span class="material-symbols-outlined">home</span>
+            <span class="font-['Plus_Jakarta_Sans'] font-medium text-[11px] mt-0.5">首页</span>
+            <div class="nav-indicator w-1 h-1 bg-primary rounded-full mt-0.5 opacity-0 transition-all shadow-[0_0_8px_rgba(0,88,188,0.8)]"></div>
+        </div>
+        <div class="nav-item flex flex-col items-center justify-center cursor-pointer opacity-80 hover:opacity-100 active:scale-90" data-page="stats" onclick="switchPage('stats')">
+            <span class="material-symbols-outlined">bar_chart</span>
+            <span class="font-['Plus_Jakarta_Sans'] font-medium text-[11px] mt-0.5">统计</span>
+            <div class="nav-indicator w-1 h-1 bg-primary rounded-full mt-0.5 opacity-0 transition-all shadow-[0_0_8px_rgba(0,88,188,0.8)]"></div>
+        </div>
+        <div class="nav-item active flex flex-col items-center justify-center cursor-pointer animate-bounce-subtle" data-page="profile" onclick="switchPage('profile')">
+            <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">person</span>
+            <span class="font-['Plus_Jakarta_Sans'] font-medium text-[11px] mt-0.5">我的</span>
+            <div class="nav-indicator w-1 h-1 bg-primary rounded-full mt-0.5 shadow-[0_0_8px_rgba(0,88,188,0.8)]"></div>
+        </div>
+    </nav>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-32 left-1/2 -translate-x-1/2 bg-gray-800 text-white px-6 py-3 rounded-full shadow-lg hidden toast z-[100]">
+        <span id="toastMessage"></span>
+    </div>
+
+    <script>
+        // ==================== 辅助函数 ====================
+        function generateSessionId() {
+            return 'guest_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+        }
+
+        // ==================== 游客模式权限控制系统 ====================
+        const GuestModeManager = {
+            isGuestMode: true,
+            operationLog: [],
+            sessionId: generateSessionId(),
+
+            generateSessionId() {
+                return 'guest_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+            },
+
+            logOperation(action, details = {}) {
+                const logEntry = {
+                    timestamp: new Date().toISOString(),
+                    action: action,
+                    details: details,
+                    sessionId: this.sessionId,
+                    page: window.currentPage || 'profile'
+                };
+                this.operationLog.push(logEntry);
+                console.log('[游客模式]', logEntry);
+
+                // 保持日志在合理范围内
+                if (this.operationLog.length > 100) {
+                    this.operationLog.shift();
+                }
+
+                return logEntry;
+            },
+
+            checkPermission(feature) {
+                // 游客模式下允许的功能
+                const allowedFeatures = [
+                    'view_profile',
+                    'view_stats',
+                    'view_home',
+                    'navigate_pages',
+                    'browse_content',
+                    'click_buttons',
+                    'view_menus'
+                ];
+
+                const isAllowed = allowedFeatures.includes(feature);
+
+                if (!isAllowed) {
+                    console.warn(`[权限控制] 功能 "${feature}" 在游客模式下受限`);
+                    this.logOperation('permission_denied', { feature });
+                }
+
+                return isAllowed;
+            },
+
+            getOperationSummary() {
+                return {
+                    totalOperations: this.operationLog.length,
+                    sessionId: this.sessionId,
+                    pagesVisited: [...new Set(this.operationLog.map(log => log.page))],
+                    actionsPerformed: [...new Set(this.operationLog.map(log => log.action))],
+                    sessionDuration: Date.now() - parseInt(this.sessionId.split('_')[1])
+                };
+            }
+        };
+
+        // ==================== 页面路由系统 ====================
+        let currentPage = 'profile';
+
+        function switchPage(pageName) {
+            if (!GuestModeManager.checkPermission('navigate_pages')) {
+                showToast('此功能需要登录');
+                return;
+            }
+
+            // 记录操作
+            GuestModeManager.logOperation('page_switch', { from: currentPage, to: pageName });
+
+            // 更新导航状态
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+                item.classList.remove('animate-bounce-subtle');
+                if (item.dataset.page === pageName) {
+                    item.classList.add('active');
+                    if (pageName === 'profile') {
+                        item.classList.add('animate-bounce-subtle');
+                    }
+                }
+            });
+
+            // 切换页面内容
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active', 'fade-in');
+            });
+
+            const targetPage = document.getElementById(`page-${pageName}`);
+            if (targetPage) {
+                setTimeout(() => {
+                    targetPage.classList.add('active', 'fade-in');
+                    currentPage = pageName;
+
+                    // 滚动到顶部
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                }, 50);
+            }
+        }
+
+        // ==================== 交互处理函数 ====================
+        function handleLocationClick() {
+            GuestModeManager.logOperation('click_location');
+            showToast('正在获取位置信息...');
+            setTimeout(() => {
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(
+                        (position) => {
+                            showToast('定位成功！');
+                        },
+                        (error) => {
+                            showToast('请开启定位权限');
+                        }
+                    );
+                } else {
+                    showToast('浏览器不支持定位');
+                }
+            }, 300);
+        }
+
+        function handleNotification() {
+            GuestModeManager.logOperation('click_notification');
+            showToast('暂无新消息');
+        }
+
+        function handleSettings() {
+            GuestModeManager.logOperation('click_settings');
+            switchPage('profile');
+            setTimeout(() => {
+                handleSettingsMenu();
+            }, 100);
+        }
+
+        function handleAvatarClick() {
+            GuestModeManager.logOperation('click_avatar');
+            showToast('编辑头像功能开发中');
+        }
+
+        function handleQRCode() {
+            GuestModeManager.logOperation('click_qrcode');
+            showToast('二维码功能开发中');
+        }
+
+        function handleMileageClick() {
+            GuestModeManager.logOperation('click_mileage');
+            switchPage('stats');
+        }
+
+        function handleFavoritesClick() {
+            GuestModeManager.logOperation('click_favorites');
+            showToast('查看收藏地点');
+        }
+
+        function handleMyLocations() {
+            GuestModeManager.logOperation('click_my_locations');
+            showToast('我的地点功能开发中');
+        }
+
+        function handleHistory() {
+            GuestModeManager.logOperation('click_history');
+            showToast('行程历史功能开发中');
+        }
+
+        function handleFeedback() {
+            GuestModeManager.logOperation('click_feedback');
+            showToast('感谢您的反馈！');
+        }
+
+        function handleSettingsMenu() {
+            GuestModeManager.logOperation('click_settings_menu');
+            showToast('设置功能开发中');
+        }
+
+        function handleUpgradePro() {
+            GuestModeManager.logOperation('click_upgrade_pro');
+            showToast('Pro功能即将上线');
+        }
+
+        // 首页功能
+        function handleStartExplore() {
+            GuestModeManager.logOperation('start_explore');
+            showToast('开始探索功能开发中');
+        }
+
+        function handleNearbySearch() {
+            GuestModeManager.logOperation('nearby_search');
+            showToast('附近搜索功能开发中');
+        }
+
+        function handleNavigation() {
+            GuestModeManager.logOperation('navigation');
+            showToast('路线导航功能开发中');
+        }
+
+        function handleTraffic() {
+            GuestModeManager.logOperation('traffic');
+            showToast('实时路况功能开发中');
+        }
+
+        function handleShareLocation() {
+            GuestModeManager.logOperation('share_location');
+            showToast('位置共享功能开发中');
+        }
+
+        // ==================== Toast 提示系统 ====================
+        let toastTimeout;
+
+        function showToast(message, duration = 2000) {
+            const toast = document.getElementById('toast');
+            const toastMessage = document.getElementById('toastMessage');
+
+            toastMessage.textContent = message;
+            toast.classList.remove('hidden');
+
+            clearTimeout(toastTimeout);
+            toastTimeout = setTimeout(() => {
+                toast.classList.add('hidden');
+            }, duration);
+        }
+
+        // ==================== 性能监控 ====================
+        const PerformanceMonitor = {
+            interactions: [],
+            startTime: Date.now(),
+
+            recordInteraction(element, action) {
+                const endTime = performance.now();
+                this.interactions.push({
+                    element,
+                    action,
+                    timestamp: endTime,
+                    responseTime: endTime - this.startTime
+                });
+
+                // 检查响应时间是否超过300ms
+                if (this.interactions.length > 0) {
+                    const lastInteraction = this.interactions[this.interactions.length - 1];
+                    if (lastInteraction.responseTime > 300) {
+                        console.warn(`[性能警告] ${element} ${action} 响应时间超过300ms: ${lastInteraction.responseTime.toFixed(2)}ms`);
+                    }
+                }
+            },
+
+            getAverageResponseTime() {
+                if (this.interactions.length === 0) return 0;
+                const totalTime = this.interactions.reduce((sum, i) => sum + i.responseTime, 0);
+                return totalTime / this.interactions.length;
+            }
+        };
+
+        // ==================== 初始化 ====================
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('=== 地图应用初始化 ===');
+            console.log('游客模式:', GuestModeManager.isGuestMode);
+            console.log('会话ID:', GuestModeManager.sessionId);
+
+            GuestModeManager.logOperation('app_init', {
+                userAgent: navigator.userAgent,
+                screenWidth: window.screen.width,
+                screenHeight: window.screen.height
+            });
+
+            // 添加全局点击监听用于性能监控
+            document.addEventListener('click', (e) => {
+                const target = e.target.closest('[onclick]') || e.target;
+                PerformanceMonitor.recordInteraction(target.className || target.tagName, 'click');
+            }, true);
+
+            // 页面可见性变化记录
+            document.addEventListener('visibilitychange', () => {
+                GuestModeManager.logOperation('visibility_change', {
+                    visibilityState: document.visibilityState
+                });
+            });
+
+            // 初始化完成
+            setTimeout(() => {
+                console.log('初始化完成，平均响应时间:', PerformanceMonitor.getAverageResponseTime().toFixed(2), 'ms');
+            }, 100);
+        });
+
+        // 导出调试工具到全局
+        window.GuestModeManager = GuestModeManager;
+        window.PerformanceMonitor = PerformanceMonitor;
+    </script>
+</body>
+</html>
